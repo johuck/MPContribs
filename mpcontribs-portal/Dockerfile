@@ -1,6 +1,5 @@
-FROM materialsproject/devops:python-3.83.4 as base
-FROM materialsproject/devops:jupyter-3.83.4 as jupyter
-FROM node:14.4.0-slim as node
+FROM materialsproject/devops:python-3.83.5 as base
+FROM node:14.5.0-slim as node
 
 FROM node as webpack-deps
 RUN apt-get update && apt-get install -y --no-install-recommends git && apt-get clean
@@ -17,10 +16,13 @@ COPY webpack.config.js .
 COPY mpcontribs/portal/assets ./mpcontribs/portal/assets
 RUN ./node_modules/.bin/webpack
 
-FROM jupyter as python-deps
-COPY requirements.txt .
+FROM base as python-deps
+RUN apt-get update && apt-get install -y --no-install-recommends gcc git g++ && apt-get clean
+ENV PATH /root/.local/bin:$PATH
 ENV PIP_FLAGS "--user --no-cache-dir --compile"
-RUN pip install $PIP_FLAGS -r requirements.txt
+COPY requirements.txt .
+RUN pip install $PIP_FLAGS -r requirements.txt && \
+    python -m ipykernel install --user
 
 FROM base as python-builds
 COPY --from=python-deps /root/.local/lib/python3.8/site-packages /root/.local/lib/python3.8/site-packages

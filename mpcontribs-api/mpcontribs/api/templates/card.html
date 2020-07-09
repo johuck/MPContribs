@@ -1,13 +1,12 @@
-<style type=text/css>{{ get_resource_as_string('templates/card.min.css')|safe }}</style>
 <div name="user_contribs">
-    <div class="panel panel-default">
+    <div class="panel panel-default" style="padding: 5px 15px; margin-bottom: 20px;">
         <div class="panel-heading">
             <h4>
                 <a href="{{ landing_page }}">{{ title }}</a>
                 {% if urls %}
-                <sup>
-                {% for url in urls %}
-                <a href="{{ url }}" target="_blank">[{{ loop.index }}]</a>
+                <sup style="font-size: 50%; vertical-align: top;">
+                {% for k, v in urls.items() %}
+                <a href="{{ v }}" target="_blank" rel="noopener noreferrer">[{{k}}]</a>
                 {% endfor %}
                 </sup>
                 {% endif %}
